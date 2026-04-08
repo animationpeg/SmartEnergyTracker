@@ -19,4 +19,4 @@ class MeterReading(models.Model):
 
     # Define how this object is displayed as a string by django
     def __str__(self):
-        return f"{self.meter.name} - {self.timestamp} - {kwh} kwh"
+        return f"{self.meter.name} - {self.timestamp} - {self.kwh} kwh"
