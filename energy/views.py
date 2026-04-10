@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.db.models import QuerySet, Sum, F
-from django.db.models.functions import TruncDate
+from django.db.models.functions import TruncDate, TruncHour
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Meter, MeterReading
@@ -25,4 +25,17 @@ class DailyUsageView(APIView):
             .order_by('date')                       # Sorts results chronologically
             )
 
+        return Response(data)
+
+# Hourly Usage View - displays a breakdown of readings by the hour
+class HourlyUsageView(APIView):
+    # Function that returns, when called, MeterReading data: timestamp hours and total kwh
+    def get(self, request):
+        data = (
+            MeterReading.objects
+            .annotate(hour=TruncHour('timestamp'))
+            .values('hour')
+            .annotate(total_kwh=Sum('kwh'))
+            .order_by('hour')
+        )
         return Response(data)
