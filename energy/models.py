@@ -9,6 +9,14 @@ class Meter(models.Model):
     def __str__(self):
         return self.name
 
+## Tariff class
+class Tariff(models.Model):
+    name = models.CharField(max_length=100)
+    price_per_kwh = models.FloatField()
+
+    def __str__(self):
+        return self.name
+
 ## Every Meter will have a Meter Reading, which will consist of time of the reading, and the kwh reading
 class MeterReading(models.Model):
     # Define the relationship between the MeterReading and the Meter classes.
@@ -16,6 +24,7 @@ class MeterReading(models.Model):
     meter = models.ForeignKey(Meter, on_delete=models.CASCADE, related_name="readings")
     timestamp = models.DateTimeField()
     kwh = models.FloatField()
+    tariff = models.ForeignKey(Tariff, on_delete=models.SET_NULL, null=True)
 
     # Define how this object is displayed as a string by django
     def __str__(self):
