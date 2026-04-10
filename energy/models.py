@@ -1,19 +1,20 @@
 from django.db import models
 
-## Base class of an Energy Meter
-class Meter(models.Model):
-    # The name, as a string with a set maximum length
-    name = models.CharField(max_length=100)
-
-    # Define how this object is displayed as a string by django
-    def __str__(self):
-        return self.name
-
 ## Tariff class
 class Tariff(models.Model):
     name = models.CharField(max_length=100)
     price_per_kwh = models.FloatField()
 
+    def __str__(self):
+        return self.name
+
+## Base class of an Energy Meter
+class Meter(models.Model):
+    # The name, as a string with a set maximum length
+    name = models.CharField(max_length=100)
+    tariff = models.ForeignKey(Tariff, on_delete=models.SET_NULL, null=True)
+
+    # Define how this object is displayed as a string by django
     def __str__(self):
         return self.name
 
@@ -24,7 +25,6 @@ class MeterReading(models.Model):
     meter = models.ForeignKey(Meter, on_delete=models.CASCADE, related_name="readings")
     timestamp = models.DateTimeField()
     kwh = models.FloatField()
-    tariff = models.ForeignKey(Tariff, on_delete=models.SET_NULL, null=True)
 
     # Define how this object is displayed as a string by django
     def __str__(self):

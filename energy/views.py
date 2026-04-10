@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.db.models import QuerySet, Sum
+from django.db.models import QuerySet, Sum, F
 from django.db.models.functions import TruncDate
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -18,7 +18,10 @@ class DailyUsageView(APIView):
             QuerySet
             .annotate(date=TruncDate('timestamp'))  # Extract only the date from the timestamp
             .values('date')                         # Group results by date
-            .annotate(total_kwh = Sum('kwh'))       # Sum total of kwh of the day
+            .annotate(
+                total_kwh = Sum('kwh'),              # Sum total of kwh of the day
+                total_cost =Sum(F('kwh') * F('meter__tariff__price_per_kwh')) # Second F() finds the meter -> tariff -> price_per_kwh
+                )       
             .order_by('date')                       # Sorts results chronologically
             )
 
